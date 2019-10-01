@@ -1,0 +1,25 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    arguments: '--configuration Release'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    arguments: '--configuration Release --output publish_output'
+    publishWebProjects: false
+    modifyOutputPath: true
+    zipAfterPublish: true
+- task: PublishPipelineArtifact@0
+  inputs:
+    artifactName: 'function' 
+    targetPath: '$(System.DefaultWorkingDirectory)/publish_output/publish_output.zip'
