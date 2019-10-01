@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace github_devops_demo
+namespace githubdemo
 {
-    public static class demofunction
+    public class demofunction
     {
         [FunctionName("demofunction")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -25,9 +25,16 @@ namespace github_devops_demo
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return new OkObjectResult(Greeter(name));
+        }
+
+        public string Greeter(string name) {
+            if (String.IsNullOrEmpty(name)) {
+                return "Hello, Anonymous";
+            }
+            else {
+                return $"Hello, {name}";
+            }
         }
     }
 }
